@@ -131,7 +131,6 @@ databricks bundle summary --target dev
 
 
 ![image_1783992166018.png](./image_1783992166018.png "image_1783992166018.png")
-```
 
 ## Lessons Learned
 
