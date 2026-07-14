@@ -206,19 +206,8 @@ FROM aerovista_bootcamp.silver.silver_travel_trips;
 - Cache `.columns` property before using in loops/comprehensions
 - DLT handles optimization automatically with `pipelines.autoOptimize.managed`
 
-### 4. Data Quality Strategy
-- Small null counts (< 0.001%) can be retained without imputation
-- Data quality expectations should drop invalid records, not fail the pipeline
-- Always validate coordinate fields for location-based data
-
-## Next Steps
-
-### Potential Enhancements
-1. **Gold Layer**: Create aggregated/business-ready tables
-2. **Monitoring**: Add alerting for data quality threshold violations
-3. **Scheduling**: Configure automatic pipeline runs (hourly/daily)
-4. **Testing**: Add unit tests for transformation logic
-5. **Documentation**: Add data dictionary and lineage diagrams
+### 4. Managed table behaviour
+- because it is managed by unity catalog, when dropped, everything is permanently deleted from databricks, unlike external tables that still has its source intact wherever it originally was in the cloud.
 
 ## Author
 Charles Edeki (charlesedeki093@gmail.com)
