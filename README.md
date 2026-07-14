@@ -21,17 +21,14 @@ aerovista-ingestion-challenge/
 ### Bronze Layer
 - **Catalog**: `aerovista_bootcamp`
 - **Schema**: `bronze`
-- **Table**: `travel_trips`
+- **Table**: `travel_trips` - Pipeline source reference
 - **Source**: NYC taxi trip data (January 2015)
 - **Row Count**: 12,749,986 records
 
 ### Silver Layer
 - **Catalog**: `aerovista_bootcamp`
 - **Schema**: `silver`
-- **Tables**:
-  - `silver_travel_trips` - Cleaned and transformed trip data
-  - `silver_travel_trips_quality_metrics` - Data quality summary
-  - `bronze_travel_trips` - Pipeline source reference
+- **Table**: `travel_trips` - Cleaned and transformed trip data
 
 ## Transformations Applied
 
@@ -69,8 +66,8 @@ Reordered columns to prioritize date/time fields:
 
 ### Null Value Analysis
 - **`improvement_surcharge`**: 3 null values out of 12,744,914 rows (0.00002%)
-- **Impact**: Negligible - does not affect analytics or aggregations
-- **Decision**: Retained as-is (no imputation needed)
+- **Impact**: The 3 rows in this case are negligible as they do not affect analytics or aggregations. Although, depending on business requirements they can be treated accordingly.
+- **Decision**: The rows having the null values are left untouched.
 
 ## Pipeline Deployment with DABs
 
@@ -89,28 +86,6 @@ The pipeline is deployed using **Databricks Asset Bundles** with the following s
 - **Photon**: Enabled
 - **Development mode**: True
 - **Continuous**: False (triggered runs only)
-
-### Deployment Process
-
-#### 1. Validate Bundle
-```bash
-cd /Users/charlesedeki093@gmail.com/aerovista-ingestion-challenge/lakehouse/aerovista-pipeline-bundle
-databricks bundle validate --strict --target dev
-```
-
-**Result**: Validation OK
-
-#### 2. Deploy Bundle
-```bash
-databricks bundle deploy --target dev
-```
-
-**Result**: Deployment complete
-
-#### 3. Run Pipeline
-- Pipeline executed via Databricks UI
-- **Duration**: ~3.5 minutes (00:32:10 - 00:35:44 UTC)
-- **Status**: ✅ COMPLETED
 
 ### Key Configuration Fixes
 1. **Serverless compute requirement**: Changed from custom cluster config to `serverless: true`
@@ -135,25 +110,6 @@ databricks bundle deploy --target dev
 - **Quality level**: Silver (cleaned and validated)
 - **Auto-optimize**: Enabled for managed optimization
 
-## Files & Notebooks
-
-### Bronze Layer Notebook
-**Path**: `/Users/charlesedeki093@gmail.com/aerovista-ingestion-challenge/lakehouse/Bronze`
-- Initial data ingestion
-- Raw data storage in Delta format
-
-### Silver Layer Notebook
-**Path**: `/Users/charlesedeki093@gmail.com/aerovista-ingestion-challenge/lakehouse/Silver`
-- Manual transformations and exploration
-- Date/time extraction logic
-- Null value analysis
-- Data quality checks
-
-### Pipeline Notebook
-**Path**: `/Users/charlesedeki093@gmail.com/aerovista-ingestion-challenge/lakehouse/aerovista-pipeline-bundle/src/travel_etl_pipeline_notebook`
-- DLT-based transformation pipeline
-- Automated bronze → silver flow
-- Quality metrics calculation
 
 ## Commands Reference
 
@@ -171,22 +127,10 @@ databricks bundle deploy --target prod
 # View deployment summary
 databricks bundle summary --target dev
 ```
+![image_1783992134897.png](./image_1783992134897.png "image_1783992134897.png")
 
-### Pipeline Operations
-- **Start run**: Use Databricks UI → Workflows → Delta Live Tables
-- **Monitor**: View execution graph, data quality metrics, and event logs in pipeline UI
-- **View tables**: Query `aerovista_bootcamp.silver.silver_travel_trips`
 
-### SQL Queries
-```sql
--- View silver travel trips
-SELECT * FROM aerovista_bootcamp.silver.silver_travel_trips LIMIT 100;
-
--- Analyze null values
-SELECT 
-  COUNT(*) as total_rows,
-  SUM(CASE WHEN improvement_surcharge IS NULL THEN 1 ELSE 0 END) as null_surcharge
-FROM aerovista_bootcamp.silver.silver_travel_trips;
+![image_1783992166018.png](./image_1783992166018.png "image_1783992166018.png")
 ```
 
 ## Lessons Learned
